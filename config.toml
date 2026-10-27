@@ -1,0 +1,30 @@
+[ollama]
+base_url = "http://localhost:11434"
+
+[models]
+# Ghost persona model — try llama3.1:8b, gemma3:9b, mistral:7b
+persona_model = "llama3.1:8b"
+
+# Code repair model — qwen2.5-coder:7b is excellent
+coder_model = "qwen2.5-coder:7b"
+
+# Embedding model for RAG memory
+embed_model = "nomic-embed-text"
+
+[voice]
+# Optional: enable offline voice with whisper.cpp + Piper TTS
+enabled = false
+whisper_model = "base"          # base, small, medium, large
+piper_voice = "en_US-lessac-medium"
+reverb = true                   # Apply ghostly reverb with sox
+
+[seance]
+# Seconds of idle before the ghost whispers
+idle_whisper_seconds = 45
+typewriter_delay_ms = 30
+flicker_interval_ms = 200
+
+[sandbox]
+# Docker sandbox for the resurrection agent
+enabled = true
+timeout_seconds = 300

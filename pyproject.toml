@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "la-tercera-muerte"
+version = "0.1.0"
+description = "A local AI séance for dead code — Día de los Muertos for forgotten repositories"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [
+  { name = "La Tercera Muerte" }
+]
+keywords = [
+  "ai", "llm", "ollama", "git", "dead-code", "dia-de-los-muertos",
+  "hacktoberfest", "open-source", "local-ai"
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+  "typer[all]>=0.12",
+  "rich>=13",
+  "textual>=0.62",
+  "gitpython>=3.1",
+  "httpx>=0.27",
+  "jinja2>=3.1",
+  "tomli>=2.0; python_version < '3.11'",
+  # Optional but recommended:
+  # "lancedb>=0.8",
+  # "pyarrow>=15",
+]
+
+[project.optional-dependencies]
+memory = [
+  "lancedb>=0.8",
+  "pyarrow>=15",
+]
+all = [
+  "lancedb>=0.8",
+  "pyarrow>=15",
+]
+
+[project.scripts]
+tercera = "tercera.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/riteshyadav33302111-cell/la-tercera-muerte"
+Repository = "https://github.com/riteshyadav33302111-cell/la-tercera-muerte"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tercera*"]
+
+[tool.setuptools.package-data]
+"tercera" = ["py.typed"]
+"templates" = ["*.j2"]

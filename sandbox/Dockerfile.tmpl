@@ -1,0 +1,10 @@
+FROM python:3.11-slim
+WORKDIR /app
+COPY app/ .
+# Install dependencies based on detected package manager
+RUN \
+  if [ -f requirements.txt ]; then pip install -r requirements.txt; \
+  elif [ -f setup.py ]; then pip install -e . 2>/dev/null || pip install -r requirements.txt 2>/dev/null || true; \
+  elif [ -f pyproject.toml ]; then pip install -e . 2>/dev/null || true; \
+  fi
+CMD ["sh"]
