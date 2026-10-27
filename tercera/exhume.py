@@ -107,17 +107,86 @@ def _extract_todos(repo_path: pathlib.Path) -> list[dict]:
 
 def _extract_dependencies(repo_path: pathlib.Path) -> list[str]:
     """Extract dependency names from common manifest files."""
-    deps = []
+    deps: list[str] = []
 
-    # Python
-    for req_file in ["requirements.txt", "requirements-dev.txt", "setup.py", "setup.cfg", "pyproject.toml"]:
+    # ── Python: requirements.txt ──────────────────────────────────────────
+    for req_file in ["requirements.txt", "requirements-dev.txt", "requirements-test.txt"]:
         p = repo_path / req_file
         if p.exists():
-            text = p.read_text(errors="ignore")
-            deps += re.findall(r"^([A-Za-z0-9_\-\.]+)", text, re.MULTILINE)[:30]
-            break
+            for line in p.read_text(errors="ignore").splitlines():
+                line = line.strip()
+                if line and not line.startswith("#") and not line.startswith("-"):
+                    m = re.match(r"^([A-Za-z0-9_\-\.]+)", line)
+                    if m:
+                        deps.append(m.group(1))
+            if deps:
+                return list(dict.fromkeys(deps))[:50]
 
-    # Node
+    # ── Python: setup.cfg install_requires ────────────────────────────────
+    setup_cfg = repo_path / "setup.cfg"
+    if setup_cfg.exists():
+        text = setup_cfg.read_text(errors="ignore")
+        in_req = False
+        for line in text.splitlines():
+            if re.match(r"\s*install_requires\s*=", line, re.I):
+                in_req = True
+                after = re.sub(r".*install_requires\s*=\s*", "", line, flags=re.I)
+                for part in re.split(r"[\s,;]+", after):
+                    m = re.match(r"([A-Za-z0-9_\-\.]+)", part.strip())
+                    if m:
+                        deps.append(m.group(1))
+                continue
+            if in_req:
+                if line.strip() and not line[0].isspace() and not line.startswith("\t"):
+                    in_req = False
+                    continue
+                m = re.match(r"\s+([A-Za-z0-9_\-\.]+)", line)
+                if m:
+                    deps.append(m.group(1))
+        if deps:
+            return list(dict.fromkeys(deps))[:50]
+
+    # ── Python: setup.py — parse install_requires list ────────────────────
+    setup_py = repo_path / "setup.py"
+    if setup_py.exists():
+        text = setup_py.read_text(errors="ignore")
+        # Direct list literal: install_requires=['foo', 'bar']
+        m = re.search(r"install_requires\s*=\s*\[([^\]]*)\]", text, re.DOTALL)
+        if m:
+            for name in re.findall(r"""['"]([A-Za-z0-9_\-\.]+)""", m.group(1)):
+                deps.append(name)
+        # Variable reference pattern: required = ['args']; install_requires=required
+        if not deps:
+            var_m = re.search(
+                r"([a-z_]+)\s*=\s*\[([^\]]*)\][^;]*\n.*?install_requires\s*=\s*\1",
+                text, re.DOTALL | re.IGNORECASE,
+            )
+            if var_m:
+                for name in re.findall(r"""['"]([A-Za-z0-9_\-\.]+)""", var_m.group(2)):
+                    deps.append(name)
+        if deps:
+            return list(dict.fromkeys(deps))[:50]
+
+    # ── Python: pyproject.toml ────────────────────────────────────────────
+    ppt = repo_path / "pyproject.toml"
+    if ppt.exists():
+        text = ppt.read_text(errors="ignore")
+        in_deps = False
+        for line in text.splitlines():
+            if re.match(r'\s*dependencies\s*=\s*\[', line, re.I):
+                in_deps = True
+                continue
+            if in_deps:
+                if "]" in line:
+                    in_deps = False
+                    continue
+                m = re.match(r"""\s*['"]([A-Za-z0-9_\-\.]+)""", line)
+                if m:
+                    deps.append(m.group(1))
+        if deps:
+            return list(dict.fromkeys(deps))[:50]
+
+    # ── Node: package.json ────────────────────────────────────────────────
     pkg = repo_path / "package.json"
     if pkg.exists():
         try:
@@ -127,12 +196,30 @@ def _extract_dependencies(repo_path: pathlib.Path) -> list[str]:
             deps += list(data.get("devDependencies", {}).keys())[:15]
         except Exception:
             pass
+        if deps:
+            return list(dict.fromkeys(deps))[:50]
 
-    # Ruby
+    # ── Ruby: Gemfile ─────────────────────────────────────────────────────
     gemfile = repo_path / "Gemfile"
     if gemfile.exists():
         text = gemfile.read_text(errors="ignore")
         deps += re.findall(r"gem ['\"]([^'\"]+)['\"]", text)[:30]
+        if deps:
+            return list(dict.fromkeys(deps))[:50]
+
+    # ── Go: go.mod ───────────────────────────────────────────────────────
+    gomod = repo_path / "go.mod"
+    if gomod.exists():
+        text = gomod.read_text(errors="ignore")
+        deps += re.findall(r"^\s+([a-z][a-z0-9\-\./]+)\s+v", text, re.MULTILINE)[:30]
+
+    return list(dict.fromkeys(d.strip() for d in deps if d.strip()))[:50]
+
+    # Go go.mod
+    gomod = repo_path / "go.mod"
+    if gomod.exists() and not deps:
+        text = gomod.read_text(errors="ignore")
+        deps += re.findall(r"^\s+([a-z][a-z0-9\-\./]+)\s+v", text, re.MULTILINE)[:30]
 
     return list(dict.fromkeys(d.strip() for d in deps if d.strip()))[:50]
 

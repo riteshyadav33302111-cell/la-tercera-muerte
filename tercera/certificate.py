@@ -14,51 +14,51 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 _CERTIFICATE_TEMPLATE = """\
-╔══════════════════════════════════════════════════════════════════════╗
-║          💀  ACTA DE DEFUNCIÓN  /  CERTIFICATE OF DEATH  💀          ║
-╠══════════════════════════════════════════════════════════════════════╣
-║                                                                      ║
-║  Nombre / Name:  {{ name | center(52) }}  ║
-║  Idioma / Language: {{ language | ljust(46) }}  ║
-║                                                                      ║
-╠══ VIDA / LIFE ═══════════════════════════════════════════════════════╣
-║                                                                      ║
-║  Nacimiento / Born:  {{ born_date | ljust(46) }}  ║
-║  Primera Palabra / First Words:                                      ║
-{% for line in first_words_wrapped %}║    {{ line | ljust(64) }}  ║
-{% endfor %}║                                                                      ║
-║  Commits totales / Total Commits:  {{ total_commits | string | ljust(32) }}  ║
-║  Edad / Age:  {{ age }}
-║                                                                      ║
-╠══ MUERTE / DEATH ════════════════════════════════════════════════════╣
-║                                                                      ║
-║  Fallecimiento / Died:  {{ died_date | ljust(43) }}  ║
-║  Silencio / Silence:  {{ silence }}
-║  Últimas Palabras / Last Words:                                      ║
-{% for line in last_words_wrapped %}║    {{ line | ljust(64) }}  ║
-{% endfor %}║                                                                      ║
-║  Causa de Muerte / Cause of Death:                                   ║
-{% for line in cause_wrapped %}║    {{ line | ljust(64) }}  ║
-{% endfor %}║                                                                      ║
-╠══ FAMILIA / FAMILY ══════════════════════════════════════════════════╣
-║                                                                      ║
-║  Los que lo hicieron / Those who made it:                            ║
-{% for name, count in family[:8] %}║    • {{ (name ~ " (" ~ count ~ " commits)") | ljust(62) }}  ║
-{% endfor %}║                                                                      ║
-╠══ ASUNTOS PENDIENTES / UNFINISHED BUSINESS ══════════════════════════╣
-║                                                                      ║
-{% if unfinished_todos %}{% for t in unfinished_todos[:5] %}║  {{ t.kind }}: {{ (t.file ~ ":" ~ t.line|string) | ljust(20) }}                                            ║
-║    {{ t.text[:62] | ljust(62) }}  ║
-{% endfor %}{% else %}║  None found. Perhaps it found peace after all.                       ║
-{% endif %}║                                                                      ║
-╠══ DEPENDENCIAS AMADAS / BELOVED DEPENDENCIES ════════════════════════╣
-║                                                                      ║
-║  {{ (deps[:8] | join(", "))[:66] | ljust(66) }}  ║
-║                                                                      ║
-╚══════════════════════════════════════════════════════════════════════╝
++======================================================================+
+|        *** ACTA DE DEFUNCION  /  CERTIFICATE OF DEATH ***            |
++======================================================================+
+|                                                                      |
+|  Nombre / Name:  {{ name[:52].center(52) }}  |
+|  Idioma / Language: {{ language[:46].ljust(46) }}  |
+|                                                                      |
++-- VIDA / LIFE -------------------------------------------------------+
+|                                                                      |
+|  Nacimiento / Born:  {{ born_date[:46].ljust(46) }}  |
+|  Primera Palabra / First Words:                                      |
+{% for line in first_words_wrapped %}|    {{ line.ljust(64) }}  |
+{% endfor %}|                                                                      |
+|  Commits totales:  {{ total_commits_str[:46].ljust(46) }}  |
+|  Edad / Age:  {{ age_str[:52].ljust(52) }}  |
+|                                                                      |
++-- MUERTE / DEATH ----------------------------------------------------+
+|                                                                      |
+|  Fallecimiento / Died:  {{ died_date[:43].ljust(43) }}  |
+|  Silencio:  {{ silence_str[:54].ljust(54) }}  |
+|  Ultimas Palabras / Last Words:                                      |
+{% for line in last_words_wrapped %}|    {{ line.ljust(64) }}  |
+{% endfor %}|                                                                      |
+|  Causa de Muerte / Cause of Death:                                   |
+{% for line in cause_wrapped %}|    {{ line.ljust(64) }}  |
+{% endfor %}|                                                                      |
++-- FAMILIA / FAMILY --------------------------------------------------+
+|                                                                      |
+|  Los que lo hicieron / Those who made it:                            |
+{% for name, count in family[:8] %}|    * {{ (name ~ " (" ~ count|string ~ " commits)")[:62].ljust(62) }}  |
+{% endfor %}|                                                                      |
++-- ASUNTOS PENDIENTES / UNFINISHED BUSINESS --------------------------+
+|                                                                      |
+{% if unfinished_todos %}{% for t in unfinished_todos[:5] %}|  {{ t.kind }}: {{ (t.file ~ ":" ~ t.line|string)[:20].ljust(20) }}                                            |
+|    {{ t.text[:62].ljust(62) }}  |
+{% endfor %}{% else %}|  None found. Perhaps it found peace after all.                       |
+{% endif %}|                                                                      |
++-- DEPENDENCIAS AMADAS / BELOVED DEPENDENCIES ------------------------+
+|                                                                      |
+|  {{ (deps[:8] | join(", "))[:66].ljust(66) }}  |
+|                                                                      |
++======================================================================+
 
-  Firmado / Signed by: La Tercera Muerte  🕯️
-  Fecha de este documento: {{ today }}
+  Signed by: La Tercera Muerte
+  Date: {{ today }}
 """
 
 
@@ -82,14 +82,14 @@ def _format_duration(days: int) -> str:
 
 def generate_certificate(grave: dict) -> str:
     """Render the death certificate as a string."""
-    from jinja2 import Template
+    from jinja2 import Environment, BaseLoader
 
     born = datetime.fromisoformat(grave["born"]).strftime("%B %d, %Y")
     died = datetime.fromisoformat(grave["died"]).strftime("%B %d, %Y")
     today = datetime.now().strftime("%B %d, %Y")
 
-    age_str = f"{_format_duration(grave.get('age_days', 0)):>43}  ║"
-    silence_str = f"{_format_duration(grave.get('silence_days', 0))} of silence{'':>20}  ║"
+    age_str = _format_duration(grave.get("age_days", 0))
+    silence_str = f"{_format_duration(grave.get('silence_days', 0))} of silence"
 
     ctx = {
         "name": grave["name"],
@@ -97,9 +97,9 @@ def generate_certificate(grave: dict) -> str:
         "born_date": born,
         "died_date": died,
         "today": today,
-        "total_commits": grave.get("total_commits", 0),
-        "age": age_str,
-        "silence": silence_str,
+        "total_commits_str": str(grave.get("total_commits", 0)),
+        "age_str": age_str,
+        "silence_str": silence_str,
         "first_words_wrapped": _wrap(grave["first_commit"]["message"]),
         "last_words_wrapped": _wrap(grave["last_commit"]["message"]),
         "cause_wrapped": _wrap(grave.get("cause_of_death", "Unknown")),
@@ -108,7 +108,12 @@ def generate_certificate(grave: dict) -> str:
         "deps": grave.get("dependencies", []),
     }
 
-    tpl = Template(_CERTIFICATE_TEMPLATE, undefined=__import__("jinja2").Undefined)
+    # Build Jinja2 env with ljust/center as filters (not built-in in Jinja2)
+    env = Environment(loader=BaseLoader())
+    env.filters["ljust"] = lambda s, w: str(s).ljust(w)
+    env.filters["center"] = lambda s, w: str(s).center(w)
+
+    tpl = env.from_string(_CERTIFICATE_TEMPLATE)
     return tpl.render(**ctx)
 
 

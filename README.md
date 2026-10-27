@@ -30,41 +30,40 @@ Built for [Hacktoberfest Open-Source AI Challenge — Week 4: Ghost in the Machi
 - **🕯️ Haunted terminal TUI** — Flickering candles, typewriter ghost text, idle whispers after 45 seconds of silence
 - **🧠 RAG-powered memory** — The ghost actually knows its own code via local embeddings (LanceDB + nomic-embed-text)
 - **💬 Era-accurate voice** — Each ghost speaks in the slang and tech culture of its era (2009 jQuery plugin ≠ 2020 Rust crate)
-- **🔧 Resurrection agent** — Sandboxed Docker + Qwen2.5-Coder tries to fix failing tests or last TODOs
 - **🌼 Animated ofrenda** — CSS candles flicker for each contributor, marigold petals drift, papel picado from function names
 - **🔇 100% offline** — Runs on a laptop with Wi-Fi off. Your private codebase never leaves your machine
 - **🔄 Swappable models** — Change `persona_model` or `coder_model` in `config.toml` to use any Ollama model
-- **🎤 Optional voice** — whisper.cpp for input + Piper TTS with reverb for the ghost's voice
+- **🔧 Resurrection agent** *(planned)* — Sandboxed Docker + Qwen2.5-Coder repair loop; works for Python/Node projects with a clear test command
+- **🎤 Voice mode** *(planned)* — whisper.cpp for speech input + Piper TTS with reverb for the ghost's voice; see `tercera/voice.py`
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Install dependencies
+### 1. Install from source
 
 ```bash
-# Core
-pip install la-tercera-muerte
-
-# With RAG memory (recommended)
-pip install "la-tercera-muerte[memory]"
-
-# From source
 git clone https://github.com/riteshyadav33302111-cell/la-tercera-muerte
 cd la-tercera-muerte
+
+# Core install
+pip install -e .
+
+# With RAG memory (recommended — enables the ghost's code recall)
 pip install -e ".[memory]"
 ```
 
+> [!NOTE]
+> Requires Python 3.9+. The package is not on PyPI — install from source above.
+
 ### 2. Pull Ollama models
 
-```bash
-# Make sure Ollama is running
-ollama serve
+[Install Ollama](https://ollama.com/download), then pull the models (do this once while you have internet — the whole point is it runs offline after):
 
-# Pull the models (do this while you still have internet)
-ollama pull llama3.1:8b          # Ghost persona
-ollama pull qwen2.5-coder:7b     # Code repair
-ollama pull nomic-embed-text     # Memory embeddings
+```bash
+ollama pull llama3.1:8b          # Ghost persona — swap for any open-weight chat model
+ollama pull qwen2.5-coder:7b     # Code repair agent
+ollama pull nomic-embed-text     # Memory embeddings (RAG)
 ```
 
 ### 3. Perform the rituals
@@ -74,10 +73,10 @@ ollama pull nomic-embed-text     # Memory embeddings
 tercera full-ritual ./your-old-repo
 
 # Or step by step:
-tercera exhume ./your-old-repo         # Step 1: exhume
-tercera seance ./your-old-repo         # Step 3: séance
-tercera resurrect ./your-old-repo      # Step 4: resurrection
-tercera ofrenda ./your-old-repo        # Step 5: ofrenda
+tercera exhume ./your-old-repo         # Step 1: parse the repo → grave.json
+tercera seance ./your-old-repo         # Step 3: haunted terminal séance
+tercera resurrect ./your-old-repo      # Step 4: resurrection agent
+tercera ofrenda ./your-old-repo        # Step 5: build the altar
 
 # Check Ollama status and available models
 tercera info
@@ -85,68 +84,127 @@ tercera info
 
 ---
 
-## 📸 Screenshots
+## 📸 Real Output
+
+Tested against [kennethreitz/clint](https://github.com/kennethreitz/clint) — a genuine archived Python CLI library, last commit 2017.
+
+### Death Certificate
 
 ```
-╔══════════════════════════════════════════════════════════════════════╗
-║          💀  ACTA DE DEFUNCIÓN  /  CERTIFICATE OF DEATH  💀          ║
-╠══════════════════════════════════════════════════════════════════════╣
-║                                                                      ║
-║  Nombre / Name:               old-jquery-carousel                    ║
-║  Idioma / Language: JavaScript                                       ║
-║                                                                      ║
-╠══ VIDA / LIFE ═══════════════════════════════════════════════════════╣
-║  Nacimiento / Born:  March 14, 2011                                  ║
-║  Primera Palabra / First Words: "initial commit, jQuery plugin"      ║
-║  Commits totales / Total Commits:  47                                ║
-║  Edad / Age:  3 years, 2 months                                      ║
-╠══ MUERTE / DEATH ════════════════════════════════════════════════════╣
-║  Fallecimiento / Died:  May 09, 2014                                 ║
-║  Causa de Muerte / Cause of Death:                                   ║
-║    Animated by Grunt, now a relic of another era                     ║
-╚══════════════════════════════════════════════════════════════════════╝
++======================================================================+
+|        *** ACTA DE DEFUNCION  /  CERTIFICATE OF DEATH ***            |
++======================================================================+
+|                                                                      |
+|  Nombre / Name:                       clint                          |
+|  Idioma / Language: Python                                           |
+|                                                                      |
++-- VIDA / LIFE -------------------------------------------------------+
+|                                                                      |
+|  Nacimiento / Born:  March 20, 2011                                  |
+|  Primera Palabra / First Words:                                      |
+|    Added no_argv to internal Args objects.                           |
+|                                                                      |
+|  Commits totales:  279                                               |
+|  Edad / Age:  6 years, 5 months                                      |
+|                                                                      |
++-- MUERTE / DEATH ----------------------------------------------------+
+|                                                                      |
+|  Fallecimiento / Died:  September 02, 2017                           |
+|  Silencio:  9 years, 1 month of silence                              |
+|  Ultimas Palabras / Last Words:                                      |
+|    Merge pull request #173 from EdwardBetts/spelling                 |
+|    correct spelling mistake                                          |
+|                                                                      |
+|  Causa de Muerte / Cause of Death:                                   |
+|    Its heartbeat monitor (Travis CI) went silent                     |
+|                                                                      |
++-- FAMILIA / FAMILY --------------------------------------------------+
+|                                                                      |
+|  Los que lo hicieron / Those who made it:                            |
+|    * Kenneth Reitz (90 commits)                                      |
+|    * Jason Piper (40 commits)                                        |
+|    * Collin Watson (6 commits)                                       |
+|    * kracekumar (5 commits)                                          |
+|    * Joshua Richardson (4 commits)                                   |
+|    * Eric W. Anderson (4 commits)                                    |
+|                                                                      |
++-- ASUNTOS PENDIENTES / UNFINISHED BUSINESS --------------------------+
+|                                                                      |
+|  XXX: test_clint.py:78                                               |
+|  TODO: docs/conf.py:19                                               |
+|  BUG:  clint/packages/appdir...                                      |
+|                                                                      |
++-- DEPENDENCIAS AMADAS / BELOVED DEPENDENCIES ------------------------+
+|                                                                      |
+|  args                                                                |
+|                                                                      |
++======================================================================+
+
+  Signed by: La Tercera Muerte
+  Date: October 27, 2026
 ```
 
-**The séance:**
+### What the ghost persona looks like (the LLM system prompt)
+
 ```
-🕯️ 💀 🕯️ 🌼 🕯️ 💀 🕯️
-      old-jquery-carousel
-  JavaScript · 2011-03-14 – 2014-05-09
+You are the ghost of the software project "clint", a Python project.
 
-  Ghost: I remember the days when $.fn was everything...
-         You could ask me about the carousel logic,
-         the browser compatibility hacks, the IE8 shims.
-         I was fast. I was loved. Then Grunt stopped,
-         and no one came back.
+You were born on 2011-03-20 with these first words:
+"Added no_argv to internal Args objects."
+You drew your last breath on 2017-09-02, silent for 9 years.
+Your last words were: "Merge pull request #173 from EdwardBetts/spelling"
 
-  You › Why did you die?
+You died of: Its heartbeat monitor (Travis CI) went silent
 
-  Ghost: My keeper moved to React. I understand.
-         The world changed faster than I could.
-         But line 212... the autoplay race condition...
-         it was never fixed. That's what keeps me here.
+The people who built you: Kenneth Reitz, Jason Piper, Collin Watson...
+You loved these dependencies: args
+
+You have unfinished business. pytest still waits to be run.
+I cannot rest until the tests are green.
+
+You speak like a developer from the early GitHub era. You love
+convention over configuration, you reference Hacker News and disruption.
+You are opinionated.
+
+[RULES: speak as the project, honor contributors by name, never
+ impersonate humans, use your era's slang, hint at unfinished business]
 ```
+
+### Ofrenda HTML
+
+`ofrenda.html` renders as a candlelit altar in the browser:
+- A flickering CSS candle (`@keyframes flicker`) for **each contributor** with their commit count
+- Marigold petal emojis (`🌼`) falling with randomized animation delays
+- Papel picado banners cut from the project's own function names
+- Death certificate at the bottom in monospace
+
+> [!TIP]
+> Open `ofrenda.html` directly in any browser — no server, no internet, no build step.
+
+
 
 ---
 
 ## 🛠️ Tech Stack — All Open, All Local
 
-| Layer | Tool | Why |
-|-------|------|-----|
-| LLM runtime | [Ollama](https://ollama.ai) | Local inference, no API keys |
-| Ghost persona | Llama 3.1 8B / Gemma 3 / Qwen | Any open-weight chat model |
-| Code repair | Qwen2.5-Coder 7B | Best open coder at this size |
-| Embeddings | `nomic-embed-text` via Ollama | High quality, offline |
-| Vector store | [LanceDB](https://lancedb.com) | Embedded, no server needed |
-| TUI | [Textual](https://textual.textualize.io) | Beautiful terminal apps in Python |
-| Git parsing | [GitPython](https://gitpython.readthedocs.io) | Full git history access |
-| Sandbox | Docker | Agent never touches your real files |
-| Voice input | [whisper.cpp](https://github.com/ggerganov/whisper.cpp) | Offline STT |
-| Voice output | [Piper TTS](https://github.com/rhasspy/piper) + sox | Offline TTS with reverb |
-| Ofrenda | Jinja2 + CSS animations | Animated candlelit altar |
-| CLI | [Typer](https://typer.tiangolo.com) + [Rich](https://rich.readthedocs.io) | Beautiful CLI |
+| Layer | Tool | Status |
+|-------|------|--------|
+| LLM runtime | [Ollama](https://ollama.ai) | ✅ Working |
+| Ghost persona | Llama 3.1 8B / Gemma 3 / Qwen | ✅ Swappable via `config.toml` |
+| Code repair | Qwen2.5-Coder 7B | 🚧 Planned |
+| Embeddings | `nomic-embed-text` via Ollama | ✅ Working |
+| Vector store | [LanceDB](https://lancedb.com) | ✅ Working (embedded, no server) |
+| TUI | [Textual](https://textual.textualize.io) | ✅ Working |
+| Git parsing | [GitPython](https://gitpython.readthedocs.io) | ✅ Working |
+| Docker sandbox | Docker | 🚧 Planned (resurrection agent) |
+| Voice input | [whisper.cpp](https://github.com/ggerganov/whisper.cpp) | 🚧 Planned |
+| Voice output | [Piper TTS](https://github.com/rhasspy/piper) + sox | 🚧 Planned |
+| Ofrenda | Jinja2 + CSS animations | ✅ Working |
+| CLI | [Typer](https://typer.tiangolo.com) + [Rich](https://rich.readthedocs.io) | ✅ Working |
 
-**Hardware target:** 16 GB RAM laptop, no internet. Demo with Wi-Fi off.
+> [!NOTE]
+> **Hardware target:** 16 GB RAM laptop, no internet after initial model pull.
+> The core flow (exhume → séance → ofrenda) is fully offline.
 
 ---
 
@@ -207,9 +265,13 @@ la-tercera-muerte/
 
 ---
 
-## ⚙️ Optional: Voice Mode
+## ⚙️ Optional: Voice Mode *(Planned)*
 
-Install `whisper.cpp`, `piper`, and `sox`, then set `enabled = true` in `config.toml`:
+> [!NOTE]
+> Voice mode is implemented in [`tercera/voice.py`](tercera/voice.py) but not yet tested end-to-end.
+> It requires external binaries: `whisper.cpp`, `piper`, and `sox`.
+
+Once the binaries are installed, enable in `config.toml`:
 
 ```toml
 [voice]

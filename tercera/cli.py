@@ -28,7 +28,13 @@ from .certificate import print_certificate, save_certificate
 from .llm import check_ollama, list_models
 from .unfinished import detect_unfinished, ghost_names_unfinished
 
-console = Console()
+# Force UTF-8 on Windows so emoji/box chars render correctly
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
+
+console = Console(highlight=False)
 app = typer.Typer(
     name="tercera",
     help="💀 La Tercera Muerte — A local AI séance for dead code.",
@@ -63,7 +69,7 @@ def _print_banner() -> None:
 # Commands
 # ---------------------------------------------------------------------------
 
-@app.command()
+@app.command(name="exhume")
 def exhume_cmd(
     repo_path: str = typer.Argument(".", help="Path to the git repository to exhume"),
     save: bool = typer.Option(True, "--save/--no-save", help="Save grave.json to .tercera/"),
@@ -119,7 +125,7 @@ def exhume_cmd(
         raise typer.Exit(1)
 
 
-@app.command()
+@app.command(name="seance")
 def seance(
     repo_path: str = typer.Argument(".", help="Path to the repository (must be exhumed first)"),
     tui: bool = typer.Option(True, "--tui/--no-tui", help="Use Textual TUI (default: True)"),
@@ -197,7 +203,7 @@ def seance(
         cli_seance(grave)
 
 
-@app.command()
+@app.command(name="resurrect")
 def resurrect_cmd(
     repo_path: str = typer.Argument(".", help="Path to the repository"),
     attempts: int = typer.Option(5, "--attempts", "-a", help="Max repair attempts"),
@@ -267,7 +273,7 @@ def resurrect_cmd(
     return result
 
 
-@app.command()
+@app.command(name="ofrenda")
 def ofrenda_cmd(
     repo_path: str = typer.Argument(".", help="Path to the repository"),
     commit: bool = typer.Option(False, "--commit", help="Commit the ofrenda to git"),
