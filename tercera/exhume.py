@@ -153,10 +153,10 @@ def _extract_todos(repo_path: pathlib.Path) -> list[dict]:
 
 
 def _extract_dependencies(repo_path: pathlib.Path) -> list[str]:
-    """Parse only requirements.txt, package.json and Gemfile."""
+    """Parse requirements.txt, setup.py, package.json, and Gemfile."""
     deps: list[str] = []
 
-    # Python requirements.txt
+    # Python requirements.txt (highest priority — most explicit)
     for req_file in ["requirements.txt", "requirements-dev.txt"]:
         p = repo_path / req_file
         if p.exists():
@@ -168,6 +168,26 @@ def _extract_dependencies(repo_path: pathlib.Path) -> list[str]:
                         deps.append(m.group(1))
             if deps:
                 return list(dict.fromkeys(deps))[:50]
+
+    # Python setup.py — try two patterns:
+    #   1. install_requires=['pkg1', 'pkg2']  (literal list)
+    #   2. var = ['pkg1']; install_requires=var  (variable reference)
+    setup_py = repo_path / "setup.py"
+    if setup_py.exists():
+        text = setup_py.read_text(encoding="utf-8", errors="ignore")
+        # Pattern 1: literal list inline
+        m1 = re.search(r"install_requires\s*=\s*\[([^\]]*)\]", text, re.DOTALL)
+        if m1:
+            deps += re.findall(r"['\"]([A-Za-z0-9_\-\.]+)['\"]", m1.group(1))
+        else:
+            # Pattern 2: variable reference  (e.g. required = ['x']; install_requires=required)
+            var_m = re.search(r"([a-zA-Z_]\w*)\s*=\s*\[([^\]]*)\]", text)
+            if var_m:
+                var_name = var_m.group(1)
+                if re.search(r"install_requires\s*=\s*" + re.escape(var_name), text):
+                    deps += re.findall(r"['\"]([A-Za-z0-9_\-\.]+)['\"]", var_m.group(2))
+        if deps:
+            return list(dict.fromkeys(deps))[:50]
 
     # Node package.json
     pkg = repo_path / "package.json"

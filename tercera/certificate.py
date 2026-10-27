@@ -24,7 +24,10 @@ def _row(text: str = "") -> str:
 
 def _divider(label: str = "") -> str:
     if label:
-        inner = f"-- {label} " + "-" * (_W - len(label) - 4)
+        # inner must be _W+2 chars wide (same as the unlabeled "=" divider)
+        # "-- LABEL " occupies len(label)+4 chars, so fill the rest with dashes
+        dashes = max(1, _W + 2 - len(label) - 4)
+        inner = f"-- {label} " + "-" * dashes
     else:
         inner = "=" * (_W + 2)
     return f"+{inner}+"
