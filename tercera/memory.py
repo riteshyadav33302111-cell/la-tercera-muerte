@@ -1,12 +1,13 @@
 """
 Memory: chunks and embeds the codebase into a local vector store (LanceDB).
-This gives the ghost RAG-powered recall of its own code.
 """
 
 from __future__ import annotations
 
 import pathlib
-from typing import Optional
+from typing import Callable, Optional
+
+from .exhume import IGNORE_DIRS, _is_ignored
 
 SOURCE_EXTENSIONS = {
     ".py", ".js", ".ts", ".rb", ".go", ".java", ".rs",
@@ -19,9 +20,8 @@ CHUNK_OVERLAP = 8
 
 
 def _chunk_file(path: pathlib.Path, repo_root: pathlib.Path) -> list[dict]:
-    """Split a source file into overlapping chunks."""
     try:
-        lines = path.read_text(errors="ignore").splitlines()
+        lines = path.read_text(encoding="utf-8", errors="ignore").splitlines()
     except Exception:
         return []
 
@@ -38,22 +38,18 @@ def _chunk_file(path: pathlib.Path, repo_root: pathlib.Path) -> list[dict]:
                 "end_line": i + len(chunk_lines),
             })
         i += CHUNK_LINES - CHUNK_OVERLAP
-
     return chunks
 
 
-def build_memory(grave: dict, progress_cb=None) -> int:
-    """
-    Embed the repository's source files into LanceDB.
-    Returns the number of chunks stored.
-    """
+def build_memory(
+    grave: dict,
+    progress_cb: Optional[Callable[[int, int, str], None]] = None,
+) -> int:
+    """Embed the repository's source files into LanceDB."""
     try:
         import lancedb
-        import pyarrow as pa
     except ImportError:
-        raise ImportError(
-            "Install lancedb and pyarrow: pip install lancedb pyarrow"
-        )
+        raise ImportError("Install lancedb and pyarrow: pip install lancedb pyarrow")
 
     from .llm import embed
 
@@ -62,20 +58,19 @@ def build_memory(grave: dict, progress_cb=None) -> int:
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
     db = lancedb.connect(str(db_path))
-
-    # Drop old table if it exists
     try:
         db.drop_table("memories")
     except Exception:
         pass
 
-    # Collect all chunks
+    # Collect chunks — skip ignored dirs
     all_chunks = []
     for f in repo_path.rglob("*"):
+        if _is_ignored(f):
+            continue
         if (
             f.is_file()
             and f.suffix.lower() in SOURCE_EXTENSIONS
-            and ".tercera" not in str(f)
             and f.stat().st_size < 500_000
         ):
             all_chunks.extend(_chunk_file(f, repo_path))
@@ -83,7 +78,6 @@ def build_memory(grave: dict, progress_cb=None) -> int:
     if not all_chunks:
         return 0
 
-    # Embed chunks
     records = []
     for i, chunk in enumerate(all_chunks):
         if progress_cb:
@@ -101,16 +95,12 @@ def build_memory(grave: dict, progress_cb=None) -> int:
             continue
 
     if records:
-        tbl = db.create_table("memories", data=records)
+        db.create_table("memories", data=records)
 
     return len(records)
 
 
 def retrieve(query: str, grave: dict, top_k: int = 5) -> list[dict]:
-    """
-    Retrieve the most relevant code chunks for a query.
-    Returns list of {text, file, start_line} dicts.
-    """
     try:
         import lancedb
     except ImportError:
@@ -120,7 +110,6 @@ def retrieve(query: str, grave: dict, top_k: int = 5) -> list[dict]:
 
     repo_path = pathlib.Path(grave["path"])
     db_path = repo_path / ".tercera" / "memory.lance"
-
     if not db_path.exists():
         return []
 
@@ -128,13 +117,11 @@ def retrieve(query: str, grave: dict, top_k: int = 5) -> list[dict]:
         db = lancedb.connect(str(db_path))
         tbl = db.open_table("memories")
         query_vec = embed(query)
-        results = tbl.search(query_vec).limit(top_k).to_list()
-        return results
+        return tbl.search(query_vec).limit(top_k).to_list()
     except Exception:
         return []
 
 
 def memory_exists(grave: dict) -> bool:
-    """Check if memory has been built for this grave."""
     db_path = pathlib.Path(grave["path"]) / ".tercera" / "memory.lance"
     return db_path.exists()

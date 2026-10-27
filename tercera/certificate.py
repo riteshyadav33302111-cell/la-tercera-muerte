@@ -1,77 +1,45 @@
 """
-Certificate of Death — Acta de Defunción.
+Certificate of Death -- Acta de Defuncion.
 
-The second ritual: a formal record of the project's life and passing.
+Built in plain Python with a row() helper so the border always lines up
+regardless of which Jinja2 filters exist. Printed with markup=False,
+emoji=False, highlight=False so the box characters survive any terminal.
 """
 
 from __future__ import annotations
 
 import textwrap
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+# Width of the inner content area (between the side borders)
+_W = 70
 
 
-_CERTIFICATE_TEMPLATE = """\
-+======================================================================+
-|        *** ACTA DE DEFUNCION  /  CERTIFICATE OF DEATH ***            |
-+======================================================================+
-|                                                                      |
-|  Nombre / Name:  {{ name[:52].center(52) }}  |
-|  Idioma / Language: {{ language[:46].ljust(46) }}  |
-|                                                                      |
-+-- VIDA / LIFE -------------------------------------------------------+
-|                                                                      |
-|  Nacimiento / Born:  {{ born_date[:46].ljust(46) }}  |
-|  Primera Palabra / First Words:                                      |
-{% for line in first_words_wrapped %}|    {{ line.ljust(64) }}  |
-{% endfor %}|                                                                      |
-|  Commits totales:  {{ total_commits_str[:46].ljust(46) }}  |
-|  Edad / Age:  {{ age_str[:52].ljust(52) }}  |
-|                                                                      |
-+-- MUERTE / DEATH ----------------------------------------------------+
-|                                                                      |
-|  Fallecimiento / Died:  {{ died_date[:43].ljust(43) }}  |
-|  Silencio:  {{ silence_str[:54].ljust(54) }}  |
-|  Ultimas Palabras / Last Words:                                      |
-{% for line in last_words_wrapped %}|    {{ line.ljust(64) }}  |
-{% endfor %}|                                                                      |
-|  Causa de Muerte / Cause of Death:                                   |
-{% for line in cause_wrapped %}|    {{ line.ljust(64) }}  |
-{% endfor %}|                                                                      |
-+-- FAMILIA / FAMILY --------------------------------------------------+
-|                                                                      |
-|  Los que lo hicieron / Those who made it:                            |
-{% for name, count in family[:8] %}|    * {{ (name ~ " (" ~ count|string ~ " commits)")[:62].ljust(62) }}  |
-{% endfor %}|                                                                      |
-+-- ASUNTOS PENDIENTES / UNFINISHED BUSINESS --------------------------+
-|                                                                      |
-{% if unfinished_todos %}{% for t in unfinished_todos[:5] %}|  {{ t.kind }}: {{ (t.file ~ ":" ~ t.line|string)[:20].ljust(20) }}                                            |
-|    {{ t.text[:62].ljust(62) }}  |
-{% endfor %}{% else %}|  None found. Perhaps it found peace after all.                       |
-{% endif %}|                                                                      |
-+-- DEPENDENCIAS AMADAS / BELOVED DEPENDENCIES ------------------------+
-|                                                                      |
-|  {{ (deps[:8] | join(", "))[:66].ljust(66) }}  |
-|                                                                      |
-+======================================================================+
-
-  Signed by: La Tercera Muerte
-  Date: {{ today }}
-"""
+def _row(text: str = "") -> str:
+    """Return one certificate line padded to _W chars with side borders."""
+    return f"| {text.ljust(_W)} |"
 
 
-def _wrap(text: str, width: int = 62) -> list[str]:
-    lines = textwrap.wrap(text, width=width)
+def _divider(label: str = "") -> str:
+    if label:
+        inner = f"-- {label} " + "-" * (_W - len(label) - 4)
+    else:
+        inner = "=" * (_W + 2)
+    return f"+{inner}+"
+
+
+def _wrap(text: str, width: int = _W - 2) -> list[str]:
+    lines = textwrap.wrap(str(text), width=width)
     return lines if lines else [""]
 
 
-def _format_duration(days: int) -> str:
+def _fmt_duration(days: int) -> str:
     if days < 0:
         return "unknown"
-    years = days // 365
-    months = (days % 365) // 30
+    years, rem = divmod(days, 365)
+    months = rem // 30
     parts = []
     if years:
         parts.append(f"{years} year{'s' if years != 1 else ''}")
@@ -81,57 +49,87 @@ def _format_duration(days: int) -> str:
 
 
 def generate_certificate(grave: dict) -> str:
-    """Render the death certificate as a string."""
-    from jinja2 import Environment, BaseLoader
-
     born = datetime.fromisoformat(grave["born"]).strftime("%B %d, %Y")
     died = datetime.fromisoformat(grave["died"]).strftime("%B %d, %Y")
     today = datetime.now().strftime("%B %d, %Y")
+    age = _fmt_duration(grave.get("age_days", 0))
+    silence = _fmt_duration(grave.get("silence_days", 0))
 
-    age_str = _format_duration(grave.get("age_days", 0))
-    silence_str = f"{_format_duration(grave.get('silence_days', 0))} of silence"
+    lines: list[str] = []
+    a = lines.append
 
-    ctx = {
-        "name": grave["name"],
-        "language": grave.get("language", "Unknown"),
-        "born_date": born,
-        "died_date": died,
-        "today": today,
-        "total_commits_str": str(grave.get("total_commits", 0)),
-        "age_str": age_str,
-        "silence_str": silence_str,
-        "first_words_wrapped": _wrap(grave["first_commit"]["message"]),
-        "last_words_wrapped": _wrap(grave["last_commit"]["message"]),
-        "cause_wrapped": _wrap(grave.get("cause_of_death", "Unknown")),
-        "family": grave.get("family", []),
-        "unfinished_todos": grave.get("unfinished_todos", []),
-        "deps": grave.get("dependencies", []),
-    }
+    a(_divider())
+    a(_row("*** ACTA DE DEFUNCION  /  CERTIFICATE OF DEATH ***".center(_W)))
+    a(_divider())
+    a(_row())
+    a(_row(f"Nombre / Name:    {grave['name'][:52]}"))
+    a(_row(f"Language:         {grave.get('language', 'Unknown')[:52]}"))
+    a(_row())
+    a(_divider("VIDA / LIFE"))
+    a(_row())
+    a(_row(f"Born:   {born}"))
+    a(_row(f"First words:"))
+    for ln in _wrap(grave["first_commit"]["message"]):
+        a(_row(f"  {ln}"))
+    a(_row())
+    a(_row(f"Total commits: {grave.get('total_commits', 0)}"))
+    a(_row(f"Age:           {age}"))
+    a(_row())
+    a(_divider("MUERTE / DEATH"))
+    a(_row())
+    a(_row(f"Died:    {died}"))
+    a(_row(f"Silent for {silence}"))
+    a(_row(f"Last words:"))
+    for ln in _wrap(grave["last_commit"]["message"]):
+        a(_row(f"  {ln}"))
+    a(_row())
+    a(_row(f"Cause of death:"))
+    for ln in _wrap(grave.get("cause_of_death", "Unknown")):
+        a(_row(f"  {ln}"))
+    a(_row())
+    a(_divider("FAMILIA / FAMILY"))
+    a(_row())
+    a(_row("Those who made it:"))
+    for name, count in grave.get("family", [])[:8]:
+        a(_row(f"  * {name} ({count} commits)"))
+    a(_row())
+    a(_divider("ASUNTOS PENDIENTES / UNFINISHED BUSINESS"))
+    a(_row())
+    todos = grave.get("unfinished_todos", [])
+    if todos:
+        for t in todos[:5]:
+            loc = f"{t['file']}:{t['line']}"[:28]
+            a(_row(f"  {t['kind']}: {loc}"))
+            for ln in _wrap(t["text"], width=_W - 6):
+                a(_row(f"    {ln}"))
+    else:
+        a(_row("  None found. Perhaps it found peace after all."))
+    a(_row())
+    a(_divider("DEPENDENCIAS / DEPENDENCIES"))
+    a(_row())
+    deps = grave.get("dependencies", [])
+    dep_line = ", ".join(deps[:8])
+    for ln in _wrap(dep_line if dep_line else "(none detected)"):
+        a(_row(f"  {ln}"))
+    a(_row())
+    a(_divider())
+    a(_row())
+    a(_row(f"  Signed by: La Tercera Muerte"))
+    a(_row(f"  Date:      {today}"))
+    a(_row())
+    a(_divider())
 
-    # Build Jinja2 env with ljust/center as filters (not built-in in Jinja2)
-    env = Environment(loader=BaseLoader())
-    env.filters["ljust"] = lambda s, w: str(s).ljust(w)
-    env.filters["center"] = lambda s, w: str(s).center(w)
-
-    tpl = env.from_string(_CERTIFICATE_TEMPLATE)
-    return tpl.render(**ctx)
+    return "\n".join(lines)
 
 
 def print_certificate(grave: dict) -> None:
-    """Print the death certificate to stdout with color."""
-    try:
-        from rich.console import Console
-        from rich.text import Text
-
-        console = Console()
-        cert = generate_certificate(grave)
-        console.print(cert, style="dim white on black")
-    except ImportError:
-        print(generate_certificate(grave))
+    """Print the death certificate safely on any terminal."""
+    from rich.console import Console
+    c = Console(markup=False, emoji=False, highlight=False)
+    c.print(generate_certificate(grave))
 
 
 def save_certificate(grave: dict, output_dir: str | None = None) -> Path:
-    """Save the certificate as a text file."""
     cert = generate_certificate(grave)
     if output_dir is None:
         out = Path(grave["path"]) / ".tercera" / "certificate.txt"

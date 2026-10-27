@@ -75,7 +75,7 @@ def transcribe_from_mic(duration_seconds: int = 5) -> Optional[str]:
             # whisper.cpp outputs to <file>.txt
             txt_file = audio_file + ".txt"
             if Path(txt_file).exists():
-                return Path(txt_file).read_text().strip()
+                return Path(txt_file).read_text(encoding="utf-8").strip()
 
     except Exception as e:
         print(f"[voice] Transcription error: {e}")
