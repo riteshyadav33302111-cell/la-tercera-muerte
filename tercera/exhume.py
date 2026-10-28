@@ -47,7 +47,7 @@ DEATH_CAUSES = [
     (re.compile(r"python_requires\s*=.*?['\"]2\.", re.I),
      "Succumbed to Python 2 end-of-life (January 1, 2020)"),
     (re.compile(r"Programming Language.*Python.*::\s*2\.", re.I),
-     "Classified under Python 2 — a lineage that ceased support in 2020"),
+     "Classified under Python 2 -- a lineage that ceased support in 2020"),
     (re.compile(r"travis-ci\.org", re.I),
      "Its heartbeat monitor (Travis CI) went silent"),
     (re.compile(r"circleci\.com.*v1", re.I),
@@ -61,11 +61,11 @@ DEATH_CAUSES = [
     (re.compile(r"left-pad", re.I),
      "Starved when left-pad vanished from npm (March 2016)"),
     (re.compile(r"""node['"]\s*:\s*['"]0\.\d""", re.I),
-     "Required Node.js 0.x — a version that departed long ago"),
+     "Required Node.js 0.x -- a version that departed long ago"),
     (re.compile(r"""ruby['"]\s*:\s*['"]1\.[89]""", re.I),
      "Breathed on Ruby 1.x, an unsupported branch"),
     (re.compile(r"flash", re.I),
-     "Built for Adobe Flash — extinguished December 31, 2020"),
+     "Built for Adobe Flash -- extinguished December 31, 2020"),
 ]
 
 LONE_MAINTAINER_THRESHOLD = 0.88

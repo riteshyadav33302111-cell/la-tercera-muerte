@@ -84,11 +84,93 @@ tercera info
 
 ---
 
-## 📸 Screenshots
+## 📸 Real Terminal Output
 
-> Screenshots from a real run coming soon.
-> Run `tercera exhume ./your-old-repo` yourself to see the death certificate in your terminal,
-> then `tercera ofrenda` to generate the HTML altar.
+### 1. Ritual 1 & 2: Exhumación & Acta de Defunción
+
+```text
++========================================================================+
+|           *** ACTA DE DEFUNCION  /  CERTIFICATE OF DEATH ***           |
++========================================================================+
+|                                                                        |
+| Nombre / Name:    clint                                                |
+| Language:         Python                                               |
+|                                                                        |
++-- VIDA / LIFE ---------------------------------------------------------+
+|                                                                        |
+| Born:   March 20, 2011                                                 |
+| First words:                                                           |
+|   Added no_argv to internal Args objects.                              |
+|                                                                        |
+| Total commits: 279                                                     |
+| Age:           6 years, 5 months                                       |
+|                                                                        |
++-- MUERTE / DEATH ------------------------------------------------------+
+|                                                                        |
+| Died:    September 02, 2017                                            |
+| Silent for 9 years, 1 month                                            |
+| Last words:                                                            |
+|   Merge pull request #173 from EdwardBetts/spelling  correct spelling  |
+|   mistake                                                              |
+|                                                                        |
+| Cause of death:                                                        |
+|   Classified under Python 2 -- a lineage that ceased support in 2020   |
+|                                                                        |
++-- FAMILIA / FAMILY ----------------------------------------------------+
+|                                                                        |
+| Those who made it:                                                     |
+|   * Kenneth Reitz (90 commits)                                         |
+|   * star:Kenneth Reitz (48 commits)                                    |
+|   * Jason Piper (40 commits)                                           |
+|   * Collin Watson (6 commits)                                          |
+|                                                                        |
++-- ASUNTOS PENDIENTES / UNFINISHED BUSINESS ----------------------------+
+|                                                                        |
+|   XXX: test_clint.py:78                                                |
+|     '] * 3)                                                            |
+|                                                                        |
++-- DEPENDENCIAS / DEPENDENCIES -----------------------------------------+
+|                                                                        |
+|   args                                                                 |
+|                                                                        |
++========================================================================+
+|                                                                        |
+|   Signed by: La Tercera Muerte                                         |
+|   Date:      October 28, 2026                                          |
+|                                                                        |
++========================================================================+
+```
+
+### 2. Ritual 3: La Sesión (Haunted Terminal Séance)
+
+```text
+  ✦  ❧  ✦   ( )    ✿ ✾ ✿    ( )    ❀ ✿ ❀    ( )   ✦  ❧  ✦
+           |||||           |||||           |||||
+          _|||||_         _|||||_         _|||||_
+
+                             clint
+                  Python  |  2011-03-20 — 2017-09-02
+  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀
+
+*The candles flicker...*
+I am clint. I was born 2011-03-20 and fell silent 2017-09-02.
+My last words were: "Merge pull request #173 from EdwardBetts/spelling correct spelling mistake"
+I remember 1 beloved dependencies, 279 moments of life, and 1 things left undone.
+Ask me anything.
+
+━━ ✦ ━━━ 💀 ━━━ ✦ ━━
+You: why you died
+━━ ✦ ━━━ 💀 ━━━ ✦ ━━
+Ghost: The world changed beneath my feet. Python 2, the breath of my youth,
+reached its end. My maintainer moved on to newer horizons, and I was left frozen
+in time with 279 memories and tests waiting for an interpreter that never came...
+```
+
+### 3. Ritual 5: La Ofrenda (Digital Altar)
+
+`tercera ofrenda ./demo-dead-repo` generates:
+- **`OFRENDA.md`**: Markdown tribute with epitaph, contributor list, and unfinished business.
+- **`ofrenda.html`**: A standalone, self-contained HTML altar (no external CDN, 100% offline) with animated candle flame CSS, marigold petal physics, and papel picado banners honoring every contributor.
 
 
 ---

@@ -44,7 +44,97 @@ At the end, the tool builds a **digital ofrenda**: an animated candlelit HTML al
 
 ## Demo
 
-> 🎬 *Demo video and altar preview to be added here.*
+Here is a real run on Kenneth Reitz's abandoned [`clint`](https://github.com/kennethreitz/clint) library (279 commits, last updated in 2017):
+
+### 1. The Death Certificate (`tercera exhume ./clint`)
+
+```text
++========================================================================+
+|           *** ACTA DE DEFUNCION  /  CERTIFICATE OF DEATH ***           |
++========================================================================+
+|                                                                        |
+| Nombre / Name:    clint                                                |
+| Language:         Python                                               |
+|                                                                        |
++-- VIDA / LIFE ---------------------------------------------------------+
+|                                                                        |
+| Born:   March 20, 2011                                                 |
+| First words:                                                           |
+|   Added no_argv to internal Args objects.                              |
+|                                                                        |
+| Total commits: 279                                                     |
+| Age:           6 years, 5 months                                       |
+|                                                                        |
++-- MUERTE / DEATH ------------------------------------------------------+
+|                                                                        |
+| Died:    September 02, 2017                                            |
+| Silent for 9 years, 1 month                                            |
+| Last words:                                                            |
+|   Merge pull request #173 from EdwardBetts/spelling  correct spelling  |
+|   mistake                                                              |
+|                                                                        |
+| Cause of death:                                                        |
+|   Classified under Python 2 -- a lineage that ceased support in 2020   |
+|                                                                        |
++-- FAMILIA / FAMILY ----------------------------------------------------+
+|                                                                        |
+| Those who made it:                                                     |
+|   * Kenneth Reitz (90 commits)                                         |
+|   * star:Kenneth Reitz (48 commits)                                    |
+|   * Jason Piper (40 commits)                                           |
+|   * Collin Watson (6 commits)                                          |
+|                                                                        |
++-- ASUNTOS PENDIENTES / UNFINISHED BUSINESS ----------------------------+
+|                                                                        |
+|   XXX: test_clint.py:78                                                |
+|     '] * 3)                                                            |
+|                                                                        |
++-- DEPENDENCIAS / DEPENDENCIES -----------------------------------------+
+|                                                                        |
+|   args                                                                 |
+|                                                                        |
++========================================================================+
+|                                                                        |
+|   Signed by: La Tercera Muerte                                         |
+|   Date:      October 28, 2026                                          |
+|                                                                        |
++========================================================================+
+```
+
+### 2. The Terminal Séance (`tercera seance ./clint`)
+
+In a gothic terminal adorned with animated candle flames and marigold borders, the spirit awakens using local RAG memory:
+
+```text
+  ✦  ❧  ✦   ( )    ✿ ✾ ✿    ( )    ❀ ✿ ❀    ( )   ✦  ❧  ✦
+           |||||           |||||           |||||
+          _|||||_         _|||||_         _|||||_
+
+                             clint
+                  Python  |  2011-03-20 — 2017-09-02
+  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀  💀
+
+*The candles flicker...*
+I am clint. I was born 2011-03-20 and fell silent 2017-09-02.
+My last words were: "Merge pull request #173 from EdwardBetts/spelling correct spelling mistake"
+I remember 1 beloved dependencies, 279 moments of life, and 1 things left undone.
+Ask me anything.
+
+━━ ✦ ━━━ 💀 ━━━ ✦ ━━
+You: why you died
+━━ ✦ ━━━ 💀 ━━━ ✦ ━━
+Ghost: The world changed beneath my feet. Python 2, the breath of my youth,
+reached its end in 2020. My creators moved on to requests and other horizons,
+and I was left frozen with tests that never ran again...
+```
+
+### 3. The Digital Altar (`tercera ofrenda ./clint`)
+
+Generates a standalone, fully offline `ofrenda.html` file right inside the repo:
+- CSS candle animations for every single contributor.
+- Drifting marigold petal physics rendered in SVG/CSS.
+- Papel picado banners displaying original function names carved into digital paper flags.
+- An AI-summoned epitaph honoring the project.
 
 ---
 
