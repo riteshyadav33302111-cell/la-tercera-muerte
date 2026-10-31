@@ -44,7 +44,9 @@ At the end, the tool builds a **digital ofrenda**: an animated candlelit HTML al
 
 ## Demo
 
-Here is a real run on Kenneth Reitz's abandoned [`clint`](https://github.com/kennethreitz/clint) library (279 commits, last updated in 2017):
+{% embed https://youtu.be/DkXyjcMsjd4 %}
+
+Here is a real ritual run on Kenneth Reitz's abandoned [`clint`](https://github.com/kennethreitz/clint) library (279 commits, last updated in 2017):
 
 ### 1. The Death Certificate (`tercera exhume ./clint`)
 
