@@ -84,6 +84,14 @@ tercera info
 
 ---
 
+## 🎬 Demo Video
+
+[![La Tercera Muerte Demo](https://img.youtube.com/vi/DkXyjcMsjd4/maxresdefault.jpg)](https://youtu.be/DkXyjcMsjd4)
+
+> 📺 **[Watch the full offline séance ritual on YouTube](https://youtu.be/DkXyjcMsjd4)**
+
+---
+
 ## 📸 Real Terminal Output
 
 ### 1. Ritual 1 & 2: Exhumación & Acta de Defunción
