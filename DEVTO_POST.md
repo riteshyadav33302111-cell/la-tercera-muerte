@@ -1,6 +1,6 @@
 ---
 title: "La Tercera Muerte: A Local AI Séance That Saves Dead Code From Being Forgotten 💀🕯️"
-published: false
+published: true
 tags: devchallenge, hf26challenge
 ---
 
@@ -209,10 +209,10 @@ By treating the codebase as an artifact with a voice and building an ofrenda tha
 
 ## Prize Categories
 
-- **Best Use of Open-Source AI** — entirely local stack, zero closed dependencies
-- **Best Día de los Muertos / Halloween Theme** — built around the three deaths tradition
-- **Most Creative Use Case** — séance for dead code
-- **Best Developer Tool** — useful for understanding inherited codebases
+- **Top Prize / Overall Challenge** — entirely open-weight, local-first architecture built around the three deaths of Día de los Muertos.
+- **Best Use of Gemma** — supports running Google's open-weight `gemma2:9b` (and `gemma:2b` for lightweight laptops) locally via Ollama with zero code changes; simply set `persona_model = "gemma2:9b"` in `config.toml`.
+- **Best Día de los Muertos / Halloween Theme** — built directly around the tradition of the three deaths and remembering forgotten labor.
+- **Most Creative Use Case** — an offline AI séance that turns abandoned git repositories into interactive ghosts.
 
 ---
 
