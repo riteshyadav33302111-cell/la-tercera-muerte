@@ -223,19 +223,6 @@ A tool that rescues the forgotten *must* be built on foundations that don't forg
 
 ---
 
-## 🎭 The Demo Video Script (90 seconds)
-
-1. **Black screen:** *"In Mexico, they say we die three times…"*
-2. Turn off Wi-Fi on camera
-3. `tercera exhume ./forgotten-repo` — death certificate prints
-4. Séance opens: candles flicker. *"Why did you die?"* Ghost answers in its era's voice
-5. Walk away. 45 seconds later, an idle whisper: *"…line 212 still remembers what you did…"*
-6. *"What keeps you here?"* Ghost names unfinished business. `tercera resurrect`. Tests turn green
-7. Ofrenda opens in browser: candles with every contributor's name
-8. **Closing text:** *"The third death is being forgotten. No one gets forgotten here."*
-
----
-
 ## 🗂️ Project Structure
 
 ```
