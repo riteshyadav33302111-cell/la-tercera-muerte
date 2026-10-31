@@ -211,10 +211,7 @@ By treating the codebase as an artifact with a voice and building an ofrenda tha
 
 ## Prize Categories
 
-- **Top Prize / Overall Challenge** — entirely open-weight, local-first architecture built around the three deaths of Día de los Muertos.
-- **Best Use of Gemma** — supports running Google's open-weight `gemma2:9b` (and `gemma:2b` for lightweight laptops) locally via Ollama with zero code changes; simply set `persona_model = "gemma2:9b"` in `config.toml`.
-- **Best Día de los Muertos / Halloween Theme** — built directly around the tradition of the three deaths and remembering forgotten labor.
-- **Most Creative Use Case** — an offline AI séance that turns abandoned git repositories into interactive ghosts.
+- **Best Use of Gemma** — Supports running Google's open-weight `gemma2:9b` (or `gemma:2b` for lightweight laptops) locally via Ollama with zero code changes. Users can swap the ghost persona to Gemma simply by setting `persona_model = "gemma2:9b"` in `config.toml`. Runs 100% offline on local hardware with zero cloud dependencies.
 
 ---
 
