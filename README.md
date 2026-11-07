@@ -1,6 +1,6 @@
 # 💀 La Tercera Muerte
 
-> *En México, decimos que uno muere tres veces.*
+> *En México, decimos que uno muere tres veces..*
 > *La primera, cuando el cuerpo se detiene.*
 > *La segunda, cuando lo entierran.*
 > *La tercera, y la última, cuando nadie pronuncia su nombre.*
